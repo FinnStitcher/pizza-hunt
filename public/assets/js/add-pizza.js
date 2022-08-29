@@ -51,6 +51,24 @@ const handlePizzaSubmit = event => {
   }
 
   const formData = { pizzaName, createdBy, size, toppings };
+
+  fetch('/api/pizzas', {
+    method: 'post',
+    headers: {
+        // with mongoose, the Accept property is also necessary
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(postResponse => {
+    alert('Pizza created successfully!');
+    console.log(postResponse);
+  })
+  .catch(err => {
+    console.log(err);
+  })
 };
 
 $pizzaForm.addEventListener('submit', handlePizzaSubmit);
