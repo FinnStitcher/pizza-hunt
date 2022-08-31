@@ -152,6 +152,28 @@ function handleNewReplySubmit(event) {
   }
 
   const formData = { writtenBy, replyBody };
+
+  fetch(`/api/comments/${pizzaId}/${commentId}`, {
+    method: 'put',
+    body: JSON.stringify(formData),
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+        throw new Error('Something went wrong!');
+    } else {
+        return response.json();
+    }
+  })
+  .then(commentResponse => {
+    alert('Reply made successfully!');
+    console.log(commentResponse);
+    location.reload();
+  })
+  .catch(err => res.json(err));
 }
 
 $backBtn.addEventListener('click', function() {
