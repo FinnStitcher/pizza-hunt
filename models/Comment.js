@@ -1,16 +1,64 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
-const CommentSchema = new Schema({
-    writtenBy: {
-        type: String
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    commentBody: {
-        type: String
-    }
+// replies are stored inside the documents for the comments they are left on
+
+const ReplySchema = new Schema(
+	{
+		// custom id to avoid confusion w/ comment _id
+		replyId: {
+			type: Schema.Types.ObjectId,
+			default: () => new Types.ObjectId()
+		},
+		replyBody: {
+			type: String
+		},
+		writtenBy: {
+			type: String
+		},
+		createdAt: {
+			type: Date,
+			default: Date.now,
+			get: createdAtVal => dateFormat(createdAtVal)
+		}
+	},
+	{
+		toJSON: {
+			getters: true
+		},
+        id: false
+	}
+);
+
+const CommentSchema = new Schema(
+	{
+		writtenBy: {
+			type: String
+		},
+		createdAt: {
+			type: Date,
+			default: Date.now,
+			get: createdAtVal => dateFormat(createdAtVal)
+		},
+		commentBody: {
+			type: String
+		},
+		// a comment has a property called replies
+		// which contains an array of objects following the pattern of ReplySchema
+		// thats crazy, huh?
+		replies: [ReplySchema]
+	},
+	{
+		toJSON: {
+            virtuals: true,
+			getters: true
+		},
+        id: false
+	}
+);
+
+CommentSchema.virtual('replyCount').get(function() {
+    return this.replies.length;
 });
 
 const Comment = model('Comment', CommentSchema);
