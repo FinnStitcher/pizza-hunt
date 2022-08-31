@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 const PizzaSchema = new Schema(
 	{
@@ -10,7 +11,8 @@ const PizzaSchema = new Schema(
 		},
 		createdAt: {
 			type: Date,
-			default: Date.now
+			default: Date.now,
+            get: createdAtVal => dateFormat(createdAtVal)
 		},
 		size: {
 			type: String,
@@ -26,7 +28,10 @@ const PizzaSchema = new Schema(
 	},
 	{
 		toJSON: {
-			virtuals: true
+			virtuals: true,
+            // the getter is the use of dateFormat() for the createdAt value
+            // it will run every time this data is retrieved
+            getters: true
 		},
 		id: false
 	}
