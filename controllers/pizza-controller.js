@@ -59,7 +59,7 @@ const pizzaController = {
             {_id: params.id},
             body,
             // this means it will return the updated document, not the original
-            {new: true}
+            {new: true, runValidators: true}
         )
         .then(dbPizzaData => {
             if (!dbPizzaData) {

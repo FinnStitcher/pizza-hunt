@@ -7,7 +7,6 @@ const commentController = {
 	// params = pizza id
 	addComment({ params, body }, res) {
 		// post request will include pizza id
-		console.log(body);
 		Comment.create(body)
 			.then(({ _id }) => {
 				// comment.create returns data that includes an _id
@@ -61,7 +60,7 @@ const commentController = {
 		Comment.findOneAndUpdate(
 			{ _id: params.commentId },
 			{ $push: { replies: body } },
-			{ new: true }
+			{ new: true, runValidators: true }
 		)
 			.then(dbCommentData => {
 				if (!dbCommentData) {
